@@ -70,13 +70,11 @@ router
 .route("/checklogin")
 .post( async (req, res, next)=>{
     if (req.session.passport) {
-        res.set('Access-Control-Allow-Origin', 'http://localhost:5173')
-        res.set('Access-Control-Allow-Credentials', 'true')
+      
         res.send("In Mainframe");
       
     } else {
-        res.set('Access-Control-Allow-Origin', 'http://localhost:5173')
-        res.set('Access-Control-Allow-Credentials', 'true')
+        
         res.status(401).send("Not in Mainframe");
     }
 });

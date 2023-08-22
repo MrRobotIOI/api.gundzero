@@ -30,7 +30,13 @@ const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io'];
 
 const corsOptions = {
   credentials: true,
-  origin: ['http://localhost:5173', 'https://mrrobotioi.github.io'],
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 };
 
 app.use(cors(corsOptions));
