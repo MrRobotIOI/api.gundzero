@@ -16,12 +16,14 @@ app.use(express.json())
 
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET,
-  cookie: {maxAge: 1200000},
+  cookie: {maxAge: 1200000, sameSite: 'none',secure: true,},
   resave: false,
   saveUninitialized: false,
-  store
+  store,
+  
+  
 })
-
+app.enable('trust proxy');
 app.use(sessionMiddleware);
 const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io'];
 
