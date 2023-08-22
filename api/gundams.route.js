@@ -14,22 +14,22 @@ router.route("/search").post(GundamsCtrl.apiSearch)
 
 
 router
-.route("/googleuser/:sub")
+.route(process.env.GOOGLEUSER_URL)
 .get(UserCtrl.apiGetGoogleUser)
 
 router
-.route("/username/:username")
+.route(process.env.USERNAME_URL)
 .get(UserCtrl.apiGetUserbyUsername)
 
 router
-.route("/user/:userId")
+.route(process.env.USER_URL)
 
 .get(UserCtrl.apiGetUser)
 .put(UserCtrl.apiUpdateUser)
 .delete(UserCtrl.apiDeleteUser)
 
 router
-.route("/user")
+.route(process.env.NEW_USER)
 .post(UserCtrl.apiPostUser)
 
 router 

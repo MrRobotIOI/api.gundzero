@@ -23,8 +23,7 @@ export default class GundamsController {
       entries_per_page: gundamsPerPage,
       total_results: totalNumGundams,
     }
-    res.set('Access-Control-Allow-Origin', 'http://localhost:5173')
-    res.set('Access-Control-Allow-Credentials', 'true')
+    
     res.json(response)
   }
   
