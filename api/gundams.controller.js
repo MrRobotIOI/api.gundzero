@@ -25,7 +25,34 @@ export default class GundamsController {
     }
     res.json(response)
   }
+  
+  static async apiSearch(req, res){
+try {
+  let result =  await GundamsDAO.getSearch(req.body.name)
+  let response = {
+    gundams: result,
+}
+res.json(response)
+} catch (error) {
+  res.status(500).send("Error at controller")
+}
+  }
+
   static async apiGetGundamsById(req, res, next) {
+    try {
+      let id = req.params.id || {}
+      let gundam = await GundamsDAO.getGundamByID(id)
+      if (!gundam) {
+        res.status(404).json({ error: "Not found" })
+        return
+      }
+      res.json(gundam)
+    } catch (e) {
+      console.log(`api, ${e}`)
+      res.status(500).json({ error: e })
+    }
+  }
+  static async apiLikedGundams(req, res, next) {
     try {
       let id = req.params.id || {}
       let gundam = await GundamsDAO.getGundamByID(id)

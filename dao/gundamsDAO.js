@@ -1,14 +1,16 @@
 import mongodb from "mongodb"
-const ObjectId = mongodb.ObjectID
+const ObjectId = mongodb.ObjectId
 let gundams
+let users
 
 export default class GundamsDAO {
   static async injectDB(conn) {
-    if (gundams) {
+    if (gundams && users) {
       return
     }
     try {
         gundams = await conn.db(process.env.GUND_NS).collection("gundams")
+        users = await conn.db(process.env.GUND_NS).collection("users")
     } catch (e) {
       console.error(
         `Unable to establish a collection handle in gundamsDAO: ${e}`,
@@ -60,7 +62,7 @@ export default class GundamsDAO {
       const pipeline = [
         {
             $match: {
-                verKa: true,
+              _id: new ObjectId(id),
             },
         },
               
@@ -70,6 +72,46 @@ export default class GundamsDAO {
       return await gundams.aggregate(pipeline).next()
     } catch (e) {
       console.error(`Something went wrong in getGundamByID: ${e}`)
+      throw e
+    }
+  }
+  static async getSearch(name) {
+   try {
+    const pipeline = [
+      {
+        "$search": {
+          "autocomplete": {
+            "query": `${name}`,
+            "path": "name", 
+            
+          }
+        }
+      }
+    ]
+
+    return gundams.aggregate(pipeline).toArray()
+   } catch (error) {
+    res.status(500).send("Error at DAO")
+   }
+  
+  }
+  static async getUser(username0) {
+    try {
+      
+      const pipeline = [
+        {
+            $match: {
+                username: username0,
+            },
+        },
+              
+            
+             
+          ]
+          
+      return await users.aggregate(pipeline).next()
+    } catch (e) {
+      console.error(`Something went wrong in getUser: ${e}`)
       throw e
     }
   }
