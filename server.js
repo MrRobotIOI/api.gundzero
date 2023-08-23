@@ -25,10 +25,6 @@ const sessionMiddleware = session({
 })
 app.enable('trust proxy');
 app.use(sessionMiddleware);
-app.use((req, res, next) => {
-  res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-  next();
-});
 const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io'];
 
 // ✅ Enable pre-flight requests
