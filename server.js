@@ -15,8 +15,8 @@ const app = express()
 app.use(express.json())
 
 const sessionMiddleware = session({
-  secret:process.env.SESSIONSECRET,
-  cookie: {maxAge: 1200000, sameSite: 'none',secure: true,},
+  secret:process.env.SESSIONSECRET, // only for deply
+  cookie: {maxAge: 1200000, /*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,
   store,
@@ -45,7 +45,7 @@ app.use(cors(corsOptions));
 
 app.use((req, res, next)=>{
     store.clear;
-   console.log(store);
+   //console.log(store);
     
     console.log(`${req.method} - ${req.url} -${req.body.name}`);
     next();
@@ -78,9 +78,3 @@ server.listen(8080, () => {
   console.log('Listening on *:8080');
 });*/
 export default app 
-
-
-
-
-
-

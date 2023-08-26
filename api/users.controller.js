@@ -94,6 +94,7 @@ export default class UsersController {
         
     }
     else{
+      
         res.status(403).send({msg: 'Not Authenticated'})
     }
       }

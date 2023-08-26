@@ -46,8 +46,8 @@ export default (passport) =>  {
     else{
         const isMatch = await bcrypt.compare(password,result.password)
         if(isMatch){
-            
             done(null,result);
+            
         }
         else{
             done(null, false);
