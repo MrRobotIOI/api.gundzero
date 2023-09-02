@@ -10,7 +10,7 @@ import http from "http"
 
 passportConfig(passport);
 
-const store = new session.MemoryStore();
+
 const app = express()
 app.use(express.json())
 
@@ -19,7 +19,7 @@ const sessionMiddleware = session({
   cookie: {maxAge: 1200000, /*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,
-  store,
+
   
   
 })
@@ -42,17 +42,18 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(passport.initialize());
+app.use(passport.session())
 app.use((req, res, next)=>{
-    store.clear;
+  
    //console.log(store);
-    
+  
+  
     console.log(`${req.method} - ${req.url} -${req.body.name}`);
     next();
 })
 app.use("/api/v1/gundams", gundams)
-app.use(passport.initialize());
-app.use(passport.session())
+
 
 
 

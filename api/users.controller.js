@@ -34,8 +34,9 @@ export default class UsersController {
     }
       } 
       static async apiGetGoogleUser(req, res, next) {
-        if(req.session.passport){
-            if(req.params.sub !== req.session.passport.user.sub){
+        console.log('---123456789098765432345678---', req.user);
+        if(req.user){
+            if(req.params.sub !== req.user.sub){
                 res.status(403).json({ error: "Ur not that guy pal" })
                 return
             }
@@ -94,7 +95,7 @@ export default class UsersController {
         
     }
     else{
-      console.log(req.session)
+     
         res.status(403).send({msg: 'Not Authenticated'})
     }
       }
@@ -170,10 +171,10 @@ export default class UsersController {
 
       static async apiUpdateLiked(req, res, next) {
 
-        if(req.session.passport){
+        if(req.user){
           if( req.body.additem)
       {  try {
-          const userid =  req.session.passport.user._id
+          const userid =  req.user._id
           const additem = req.body.additem
           const date = new Date()
           let liked_array = []
@@ -216,10 +217,10 @@ export default class UsersController {
 
       static async apiRemoveLiked(req, res, next) {
 
-        if(req.session.passport){
+        if(req.user){
           if( req.body.removeitem)
       {  try {
-          const userid =  req.session.passport.user._id
+          const userid =  req.user._id
           const removeitem = req.body.removeitem
           const date = new Date()
           let liked_array = []
@@ -262,7 +263,7 @@ export default class UsersController {
 
       static async apiGetLiked(req, res, next) {
         
-        if(req.session.passport){
+        if(req.user){
             //This is so a logged in user cannot access another users data
            /* if(req.body.userId !== req.session.passport.user._id){
              
@@ -274,7 +275,7 @@ export default class UsersController {
     
         
         try {
-          let userId = req.session.passport.user._id
+          let userId = req.user._id
           let user = await UsersDAO.getUserbyId(userId)
         
           if (!user) {

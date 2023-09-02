@@ -10,10 +10,12 @@ import dotenv from "dotenv"
 import bcrypt from 'bcrypt'
 dotenv.config()
 passport.serializeUser((user, done)=>{
+    console.log("Being Used 1")
     done(null, user);
 });
 
 passport.deserializeUser(async (user,done)=>{
+    console.log("Being Used 2")
   try {
     var result = {};
     if(user.sub){
@@ -24,6 +26,7 @@ passport.deserializeUser(async (user,done)=>{
   }
 
     if (result!==null){
+        
      done(null, result);
     }
   } catch (error) {
@@ -105,8 +108,8 @@ passport.use('googlejwt',new CustomStrategy(
         done(null, result);
     }
     else{
-     
-            
+      
+      
             done(null,result);
         
         
