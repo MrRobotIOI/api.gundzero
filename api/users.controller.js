@@ -94,8 +94,8 @@ export default class UsersController {
         
     }
     else{
-      const obj = req.session
-        res.status(200).send(obj)
+      console.log(req.session)
+        res.status(403).send({msg: 'Not Authenticated'})
     }
       }
       static async apiPostUser(req, res, next) {
