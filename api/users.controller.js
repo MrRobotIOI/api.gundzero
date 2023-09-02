@@ -29,8 +29,8 @@ export default class UsersController {
         }
     }
     else{
-      const obj = req.session;
-        res.status(403).send({obj})
+      
+        res.status(403).send({msg: 'Not Authenticated'})
     }
       } 
       static async apiGetGoogleUser(req, res, next) {
@@ -94,7 +94,8 @@ export default class UsersController {
         
     }
     else{
-        res.status(403).send({msg: 'Not Authenticated'})
+      const obj = req.session
+        res.status(403).send({obj: obj})
     }
       }
       static async apiPostUser(req, res, next) {
