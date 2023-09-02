@@ -14,7 +14,7 @@ router.route("/search").post(GundamsCtrl.apiSearch)
 
 
 router
-.route(process.env.GOOGLEUSER_URL)
+.route("/googleuser/:sub")
 .get(UserCtrl.apiGetGoogleUser)
 
 router

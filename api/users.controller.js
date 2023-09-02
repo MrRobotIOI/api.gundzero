@@ -5,9 +5,9 @@ import bcrypt from "bcrypt"
 export default class UsersController {
     static async apiGetUser(req, res, next) {
         //Checks if logged in before making requests
-        if(req.session.passport){
+        if(req.user){
             //This is so a logged in user cannot access another users data
-            if(req.params.userId !== req.session.passport.user._id){
+            if(req.params.userId !== req.user._id){
                 res.status(403).json({ error: "Ur not that guy pal" })
                 return
             }
@@ -66,12 +66,12 @@ export default class UsersController {
     }
       } 
       static async apiGetUserbyUsername(req, res, next) {
-        if(req.session.passport){
+        if(req.user){
         try {
           let username = req.params.username
           //will likeley have to get rid of params and just use
           //the user stored in passport
-          if(req.params.username !== req.session.passport.user.username){
+          if(req.params.username !== req.user.username){
             res.status(403).json({ error: "Ur not that guy pal" })
             return
           }
@@ -131,7 +131,7 @@ export default class UsersController {
         /**IMPORTANT
          * make more efficient
         */
-        if(req.session.passport.user){
+        if(req.user){
         try {
           const userid =  req.params.userId
           const username = req.body.username
@@ -301,9 +301,9 @@ export default class UsersController {
       } 
     
       static async apiDeleteUser(req, res, next) {
-        if(req.session.passport.user){
+        if(req.user){
         try {
-          const userId = req.session.passport.user._id
+          const userId = req.user._id
           
           const userResponse = await UsersDAO.deleteUser(
             userId,
