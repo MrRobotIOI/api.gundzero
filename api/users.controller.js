@@ -95,7 +95,7 @@ export default class UsersController {
     }
     else{
       const obj = req.session
-        res.send(obj)
+        res.status(200).send(obj)
     }
       }
       static async apiPostUser(req, res, next) {
