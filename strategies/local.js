@@ -10,12 +10,12 @@ import dotenv from "dotenv"
 import bcrypt from 'bcrypt'
 dotenv.config()
 passport.serializeUser((user, done)=>{
-    console.log("Being Used 1")
+    console.log("Serializing")
     done(null, user);
 });
 
 passport.deserializeUser(async (user,done)=>{
-    console.log("Being Used 2")
+    console.log("Deserializing")
   try {
     var result = {};
     if(user.sub){
