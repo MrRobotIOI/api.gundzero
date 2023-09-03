@@ -11,27 +11,16 @@ import bcrypt from 'bcrypt'
 dotenv.config()
 passport.serializeUser((user, done)=>{
     console.log("Serializing")
+    console.log(user)
     done(null, user);
 });
 
 passport.deserializeUser(async (user,done)=>{
     console.log("Deserializing")
-  try {
-    var result = {};
-    if(user.sub){
-        result =  await UsersDAO.getUserbySub(user.sub);
-    }
-  else{
-    result =  await UsersDAO.getUserbyUsername(user.username);
-  }
+    console.log(user)
+     done(null, user);
+    
 
-    if (result!==null){
-        
-     done(null, result);
-    }
-  } catch (error) {
-    done(error,null);
-  }
 });
 export default (passport) =>  {
     
