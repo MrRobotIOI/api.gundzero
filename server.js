@@ -8,7 +8,7 @@ import passportConfig from "./strategies/local.js";
 import { Server } from 'socket.io';
 import http from "http"
 
-passportConfig(passport);
+
 
 
 const app = express()
@@ -42,14 +42,15 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+passportConfig(passport);
 app.use(passport.initialize());
 app.use(passport.session())
 app.use((req, res, next)=>{
   
-   //console.log(store);
-  
-  
+console.log("Middlewarexxxxxxxxxxxx")
+console.log(req.user)
     console.log(`${req.method} - ${req.url} -${req.body.name}`);
+    console.log("xxxxxxxxxxxxxxxxxx")
     next();
 })
 app.use("/api/v1/gundams", gundams)
