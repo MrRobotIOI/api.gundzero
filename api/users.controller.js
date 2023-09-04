@@ -381,7 +381,7 @@ export default class UsersController {
     
         
         try {
-          let userId = req.user.id
+          let userId = req.session.user.id
           let user = await UsersDAO.getUserbyId(userId)
         
           if (!user) {

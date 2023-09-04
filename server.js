@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import session from "cookie-session"
+import session, { Cookie } from "express-session"
 import gundams from "./api/gundams.route.js"
 import dotenv from "dotenv"
 import passport from "passport"
