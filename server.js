@@ -36,7 +36,7 @@ const app = express()
 app.use(express.json())
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, sameSite: "none",secure: true, httpOnly: true/*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, httpOnly: true/*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   token : null,
@@ -67,12 +67,7 @@ app.use(cors({
 }));
 
 app.use((req, res, next)=>{
-  res.set('credentials', 'include');
-    res.set('Access-Control-Allow-Credentials', true);
-    res.set('Access-Control-Allow-Origin', req.headers.origin);
-    res.set('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.set('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-    
+  
 console.log("Middlewarexxxxxxxxxxxx")
 console.log("Session Id:",req.sessionID)
     console.log(`${req.method} - ${req.url} -${req.user}`);
