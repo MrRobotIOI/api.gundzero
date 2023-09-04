@@ -36,14 +36,14 @@ const app = express()
 app.use(express.json())
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, secure:true, /*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, sameSite: "none",secure: true, httpOnly: true/*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   token : null,
 })
 app.enable('trust proxy');
 app.use(sessionMiddleware);
-const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io'];
+const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io',"https://gund-zero.onrender.com"];
 
 // ✅ Enable pre-flight requests
 
