@@ -1,6 +1,6 @@
 import express from "express"
 import cors from "cors"
-import session, { Cookie } from "express-session"
+import session from "cookie-session"
 import gundams from "./api/gundams.route.js"
 import dotenv from "dotenv"
 import passport from "passport"
@@ -36,7 +36,7 @@ const app = express()
 app.use(express.json())
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, sameSite: 'none',secure: true,/*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, sameSite: 'none', httpOnly: true, secureProxy: true,/*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   token : null,
