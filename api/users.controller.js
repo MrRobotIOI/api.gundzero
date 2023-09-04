@@ -111,7 +111,6 @@ export default class UsersController {
              console.log("apiGoogleLogin call:", req.session)
             
              UsersDAO.updateToken(user._id,refreshToken)
-             
                res.json(user)
             
             
@@ -370,7 +369,7 @@ export default class UsersController {
 
       static async apiGetLiked(req, res, next) {
         
-        if(req.user){
+        if(req.session.user){
             //This is so a logged in user cannot access another users data
            /* if(req.body.userId !== req.session.passport.user._id){
              
