@@ -36,7 +36,7 @@ const app = express()
 app.use(express.json())
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, sameSite: "false",secure: true, httpOnly: true/*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, sameSite: "none",secure: true, httpOnly: true/*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   token : null,
