@@ -108,9 +108,11 @@ export default class UsersController {
           req.session.token= accessToken;
           req.session.user = user
              const refreshToken = jwt.sign(user, process.env.REFRESH_SECRET)
-             res.json(user)
+             console.log("apiGoogleLogin call:", req.session)
+            
              UsersDAO.updateToken(user._id,refreshToken)
-              
+             
+               res.json(user)
             
             
             
@@ -140,7 +142,7 @@ export default class UsersController {
       }
       static async apiGetGoogleUser(req, res, next) {
         console.log('---User Info---', req.user);
-        if(req.user){
+        if(req.session.token!== null){
             if(req.params.sub !== req.user.sub){
                 res.status(403).json({ error: "Ur not that guy pal" })
                 return
@@ -160,7 +162,7 @@ export default class UsersController {
           wishitems : user.wishitems,
           
           }
-          res.json(user0)
+          res.send(user0)
         } catch (e) {
           console.log(`api, ${e}`)
           res.status(500).json({ error: e })

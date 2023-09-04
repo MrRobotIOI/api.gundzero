@@ -14,6 +14,7 @@ function authenticateToken(req,res,next) {
   //const token = authHeader && authHeader.split(' ')[1]
   const token = req.session.token
   if(token == null) {
+    //console.log("No Token",req.session)
     return res.status(401).send("No token")
 }
   
@@ -24,6 +25,7 @@ function authenticateToken(req,res,next) {
       return res.status(403).send("Wrong token pal")
     }
     req.user = user
+    //console.log("authenticateToken: ",req.session)
     next();
   })
   

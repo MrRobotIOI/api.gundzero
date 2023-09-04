@@ -10,7 +10,28 @@ import http from "http"
 import jwt from 'jsonwebtoken'
 
 
+function authenticateToken(req,res,next) {
+  const authHeader = req.headers['authorization']
 
+//const token = authHeader && authHeader.split(' ')[1]
+const token = req.session.token
+if(token == null) {
+  console.log("No Token",req.session)
+  return res.status(401).send("No token")
+}
+
+jwt.verify(token, process.env.ACCESS_SECRET, (err,user)=>{
+  if (err) {
+      req.session.token = null
+      console.log(err)
+    return res.status(403).send("Wrong token pal")
+  }
+  req.user = user
+  console.log("authenticateToken: ",req.session)
+  next();
+})
+
+}
 const app = express()
 app.use(express.json())
 const sessionMiddleware = session({
@@ -39,12 +60,15 @@ const corsOptions = {
 };
 
 
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: ['http://localhost:5173', "https://mrrobotioi.github.io"],
+  credentials: true
+}));
 
 app.use((req, res, next)=>{
   
 console.log("Middlewarexxxxxxxxxxxx")
-console.log("Access Token:",req.session.token)
+console.log("Session Id:",req.sessionID)
     console.log(`${req.method} - ${req.url} -${req.user}`);
     console.log("xxxxxxxxxxxxxxxxxx")
     next();
