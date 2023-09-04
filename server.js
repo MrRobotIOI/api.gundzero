@@ -7,21 +7,18 @@ import passport from "passport"
 import passportConfig from "./strategies/local.js";
 import { Server } from 'socket.io';
 import http from "http"
-
+import jwt from 'jsonwebtoken'
 
 
 
 const app = express()
 app.use(express.json())
-
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
   cookie: {maxAge: 1200000, httpOnly: false, /*sameSite: 'none',secure: true,*/},
   resave: false,
-  saveUninitialized: false,
-
-  
-  
+  saveUninitialized: false,  
+  token : null,
 })
 //app.enable('trust proxy');
 app.use(sessionMiddleware);
@@ -41,18 +38,18 @@ const corsOptions = {
   },
 };
 
+
 app.use(cors(corsOptions));
-passportConfig(passport);
-app.use(passport.initialize());
-app.use(passport.session())
+
 app.use((req, res, next)=>{
   
 console.log("Middlewarexxxxxxxxxxxx")
-console.log(req.user)
-    console.log(`${req.method} - ${req.url} -${req.body.name}`);
+console.log("Access Token:",req.session.token)
+    console.log(`${req.method} - ${req.url} -${req.user}`);
     console.log("xxxxxxxxxxxxxxxxxx")
     next();
 })
+
 app.use("/api/v1/gundams", gundams)
 
 

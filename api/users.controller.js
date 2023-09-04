@@ -1,8 +1,14 @@
 import GundamsDAO from "../dao/gundamsDAO.js";
 import UsersDAO from "../dao/usersDAO.js"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import jwt_decode from "jwt-decode";
+function generateAccessToken(user) {
+  return jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '20s'})
+}
 
 export default class UsersController {
+  
     static async apiGetUser(req, res, next) {
         //Checks if logged in before making requests
         if(req.user){
@@ -33,8 +39,107 @@ export default class UsersController {
         res.status(403).send({msg: 'Not Authenticated'})
     }
       } 
+      static async apiGoogleLogin(req,res){
+        var decodedToken = jwt_decode(req.body.jwt);
+        
+        try {
+            //Verifying token
+            if(decodedToken.aud !== process.env.CLIENTID){
+                console.log("WRONG AUD")
+                res.status(403).send({msg: 'Not Authenticated'})
+            }
+            if(decodedToken.iss !== "https://accounts.google.com" ){
+                if(decodedToken.iss !== "accounts.google.com"){
+                    console.log("WRONG ISS")
+                    res.status(403).send({msg: 'Not Authenticated'})
+                }
+                
+            }
+           if(decodedToken.exp < new Date()/1000){
+                console.log("EXPIRED")
+                res.status(403).send({msg: 'Not Authenticated'})
+            }
+    
+             
+            const user0 =  await UsersDAO.getUserbySub(decodedToken.sub);
+            const user = {
+            
+              display_name : user0.display_name,
+              sub : user0.sub,
+              wishitems: user0.wishitems,
+           
+              }
+        if(user===null)
+        {
+            /**
+             * IMPORTANT
+             * Create new account using info
+             * goog user document should not have a username and password 
+             * so it cant be logged in (plus generating  them is not practical)
+             */
+            const wishitems = [];
+            await UsersDAO.addGoogleUser(
+                decodedToken.given_name,
+                decodedToken.sub,
+                wishitems
+              
+                
+              )
+              const user0 =  await UsersDAO.getUserbySub(decodedToken.sub);
+            const user = {
+             
+              display_name : user0.display_name,
+              sub : user0.sub,
+              wishitems: user0.wishitems,
+             
+              }
+             const accessToken= generateAccessToken(user)
+             req.session.token= accessToken;
+             req.session.user = user
+             const refreshToken = jwt.sign(user, process.env.REFRESH_SECRET)
+             res.json(user)
+             UsersDAO.updateToken(user._id,refreshToken)
+             
+            
+        }
+        else{
+          
+          const accessToken= generateAccessToken(user)
+          req.session.token= accessToken;
+          req.session.user = user
+             const refreshToken = jwt.sign(user, process.env.REFRESH_SECRET)
+             res.json(user)
+             UsersDAO.updateToken(user._id,refreshToken)
+              
+            
+            
+            
+        }
+        } catch (error) {
+          res.status(401)
+        }
+      }
+      static async apiRefreshToken(req,res){
+        {
+          console.log("HERE", req.user)
+          const user0 =  await UsersDAO.getUserbySub(req.session.user.sub);
+         
+      if (user0.refreshToken === null){
+          return res.sendStatus(401)
+      }
+    
+      jwt.verify(user0.refreshToken, process.env.REFRESH_SECRET, (err,user)=>{
+          if (err) {
+              return res.sendStatus(403)
+          }
+          const accessToken = generateAccessToken(req.session.user);
+          req.session.token= accessToken;
+          res.status(200).send("New Access Token Granted")
+      })
+      }
+      }
       static async apiGetGoogleUser(req, res, next) {
-        console.log('---123456789098765432345678---', req.user);
+        console.log('---User Info---', req.user);
         if(req.user){
             if(req.params.sub !== req.user.sub){
                 res.status(403).json({ error: "Ur not that guy pal" })
@@ -53,7 +158,7 @@ export default class UsersController {
             _id : user._id, 
           display_name : user.display_name,
           wishitems : user.wishitems,
-          exp: req.session.cookie.originalMaxAge
+          
           }
           res.json(user0)
         } catch (e) {
@@ -85,7 +190,7 @@ export default class UsersController {
            
           username : user.username,
         
-          exp: req.session.cookie.originalMaxAge
+          
           }
           res.json(user0)
         } catch (e) {

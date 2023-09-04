@@ -2,20 +2,44 @@ import express from "express"
 import GundamsCtrl from "./gundams.controller.js"
 import UserCtrl from "./users.controller.js"
 import dotenv from "dotenv"
+import UserDAO from "../dao/usersDAO.js";
 import passport from "passport"
 import googlepassport from "passport"
+import jwt from 'jsonwebtoken'
 dotenv.config()
 const router = express.Router()
+function authenticateToken(req,res,next) {
+    const authHeader = req.headers['authorization']
+  
+  //const token = authHeader && authHeader.split(' ')[1]
+  const token = req.session.token
+  if(token == null) {
+    return res.status(401).send("No token")
+}
+  
+  jwt.verify(token, process.env.ACCESS_SECRET, (err,user)=>{
+    if (err) {
+        req.session.token = null
+        console.log(err)
+      return res.status(403).send("Wrong token pal")
+    }
+    req.user = user
+    next();
+  })
+  
+  }
+
+
 router.route("/").get(GundamsCtrl.apiGetGundams)
 
 router.route("/id/:id").get(GundamsCtrl.apiGetGundamsById)
 
 router.route("/search").post(GundamsCtrl.apiSearch)
-
+router.route("/token").post(UserCtrl.apiRefreshToken)
 
 router
 .route("/googleuser/:sub")
-.get(UserCtrl.apiGetGoogleUser)
+.get(authenticateToken,UserCtrl.apiGetGoogleUser)
 
 router
 .route(process.env.USERNAME_URL)
@@ -45,13 +69,7 @@ router
 router 
 //env
 .route("/googlelogin")
-.post(googlepassport.authenticate('googlejwt'), (req,res) =>{
-  
-    console.log("new googlesessionID: "+req.sessionID);
-    
-    res.json({sub: req.session.passport.user.sub});
-    
-})
+.post(UserCtrl.apiGoogleLogin)
 
 router
 .route("/logout")
@@ -68,15 +86,12 @@ router
 
 router
 .route("/checklogin")
-.post( async (req, res, next)=>{
-    if (req.session.passport) {
-      
-        res.send("In Mainframe");
-      
-    } else {
-      
-        res.status(401).send("Not in Mainframe");
+.post( authenticateToken,async (req, res, next)=>{
+    if(req.session.user){ 
+     return res.send("In Mainframe")
     }
+    return res.send("Not in mainframe")
+   
 });
 
 router

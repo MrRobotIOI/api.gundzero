@@ -133,6 +133,23 @@ export default class GundamsDAO {
       return { error: e }
     }
   }
+  static async updateToken(userId,refreshToken) {
+    try {
+      console.log("Adding refresh token...")
+     // console.log(userId)
+      const updateResponse = await users.updateOne(
+        { _id: new ObjectId(userId)},
+        { $set: { 
+            refreshToken: refreshToken,
+        } },
+      )
+
+      return updateResponse
+    } catch (e) {
+      console.error(`Unable to update token: ${e}`)
+      return { error: e }
+    }
+  }
   static async updateLiked(userId, wishitems, date) {
     try {
       const updateResponse = await users.updateOne(
