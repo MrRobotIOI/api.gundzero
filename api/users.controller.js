@@ -63,7 +63,7 @@ export default class UsersController {
              
             const user0 =  await UsersDAO.getUserbySub(decodedToken.sub);
             const user = {
-            
+              id: user0._id,
               display_name : user0.display_name,
               sub : user0.sub,
               wishitems: user0.wishitems,
@@ -87,7 +87,7 @@ export default class UsersController {
               )
               const user0 =  await UsersDAO.getUserbySub(decodedToken.sub);
             const user = {
-             
+              id: user0._id,
               display_name : user0.display_name,
               sub : user0.sub,
               wishitems: user0.wishitems,
@@ -381,7 +381,7 @@ export default class UsersController {
     
         
         try {
-          let userId = req.user._id
+          let userId = req.user.id
           let user = await UsersDAO.getUserbyId(userId)
         
           if (!user) {
