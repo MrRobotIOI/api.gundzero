@@ -117,6 +117,7 @@ export default class UsersController {
             
         }
         } catch (error) {
+          console.log(error)
           res.status(401)
         }
       }
