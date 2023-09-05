@@ -61,7 +61,7 @@ const corsOptions = {
 
 
 app.use(cors({
-  origin: ['http://localhost:5173', "https://mrrobotioi.github.io"],
+  origin: ['http://localhost:5173', "https://mrrobotioi.github.io","https://gund-zero.onrender.com"],
   credentials: true,
   
 }));
