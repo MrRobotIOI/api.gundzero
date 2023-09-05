@@ -41,7 +41,7 @@ const sessionMiddleware = session({
   saveUninitialized: false,  
   token : null,
 })
-app.set('trust proxy', true)
+app.set('trust proxy', 2)
 app.use(sessionMiddleware);
 const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io',"https://gund-zero.onrender.com"];
 
