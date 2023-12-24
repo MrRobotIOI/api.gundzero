@@ -54,7 +54,7 @@ app.enable('trust proxy');
 app.use(sessionMiddleware);
 const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io',"https://gund-zero.onrender.com"];
 
-
+//
 
 const corsOptions = {
   credentials: true,
