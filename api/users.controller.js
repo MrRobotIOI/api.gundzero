@@ -40,8 +40,9 @@ export default class UsersController {
     }
       } 
       static async apiGoogleLogin(req,res){
-        var decodedToken = jwt_decode(req.body.jwt);
         
+        var decodedToken = jwt_decode(req.body.jwt);
+       
         try {
             //Verifying token
             if(decodedToken.aud !== process.env.CLIENTID){
@@ -107,11 +108,12 @@ export default class UsersController {
           const accessToken= generateAccessToken(user)
           req.session.token= accessToken;
           req.session.user = user
+          
              const refreshToken = jwt.sign(user, process.env.REFRESH_SECRET)
-             console.log("apiGoogleLogin call:", req.session)
+             //console.log("apiGoogleLogin call:", req.session)
             
              UsersDAO.updateToken(user._id,refreshToken)
-               res.json(user)
+             res.sendStatus(200)
             
             
             
@@ -138,6 +140,14 @@ export default class UsersController {
           req.session.token= accessToken;
           res.status(200).send("New Access Token Granted")
       })
+      }
+      }
+      static async apiCheckLogin(req,res){
+        {
+          console.log("YYYYYYY")
+         
+    
+     
       }
       }
       static async apiGetGoogleUser(req, res, next) {
@@ -172,6 +182,19 @@ export default class UsersController {
         res.status(403).send({msg: 'Not Authenticated'})
     }
       } 
+      static async apiGetProfile(req, res, next) {
+       
+     
+        try {
+         console.log(req.session.user)
+          res.send(req.session.user)
+        } catch (e) {
+          console.log(`api, ${e}`)
+          res.status(500).json({ error: e })
+        }
+    }
+     
+      
       static async apiGetUserbyUsername(req, res, next) {
         if(req.user){
         try {

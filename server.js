@@ -8,7 +8,8 @@ import passportConfig from "./strategies/local.js";
 import { Server } from 'socket.io';
 import http from "http"
 import jwt from 'jsonwebtoken'
-
+import mongoose from "mongoose"
+import MongoStore from "connect-mongo"
 
 function authenticateToken(req,res,next) {
   const authHeader = req.headers['authorization']
@@ -33,19 +34,26 @@ jwt.verify(token, process.env.ACCESS_SECRET, (err,user)=>{
 
 }
 const app = express()
+
+
+
 app.use(express.json())
+app.use(express.urlencoded({extended: true}));
+
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, sameSite: 'none', secure: true/*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, sameSite: 'none', secure: false /*sameSite: 'none',secure: true,*/},
   resave: false,
-  saveUninitialized: true,  
-  
+  saveUninitialized: false,  
+  store: MongoStore.create({
+    mongoUrl: process.env.GUND_DB_URI
+  })
 })
+
 app.enable('trust proxy');
 app.use(sessionMiddleware);
 const whitelist = ['http://localhost:5173', 'https://mrrobotioi.github.io',"https://gund-zero.onrender.com"];
 
-// ✅ Enable pre-flight requests
 
 
 const corsOptions = {
@@ -61,19 +69,20 @@ const corsOptions = {
 
 
 app.use(cors({
-  origin: ['http://localhost:5173', "https://mrrobotioi.github.io","https://gund-zero.onrender.com"],
+  origin: ['http://localhost:5173', 'http://localhost:8000', "https://mrrobotioi.github.io","https://gund-zero.onrender.com"],
   credentials: true,
   
 }));
 
 app.use((req, res, next)=>{
   
-console.log("Middlewarexxxxxxxxxxxx")
-console.log("Session Id:",req.sessionID)
-    console.log(`${req.method} - ${req.url} -${req.user}`);
-    console.log("xxxxxxxxxxxxxxxxxx")
-    next();
-})
+  console.log("Middlewarexxxxxxxxxxxx")
+  console.log("Session Id:",req.sessionID)
+      console.log(`${req.method} - ${req.url} -${req.user}`);
+      console.log(req.session.token+"\n"+req.session.user)
+      console.log("xxxxxxxxxxxxxxxxxx")
+      next();
+  })
 
 app.use("/api/v1/gundams", gundams)
 

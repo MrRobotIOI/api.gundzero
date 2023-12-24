@@ -10,9 +10,10 @@ dotenv.config()
 const router = express.Router()
 function authenticateToken(req,res,next) {
     const authHeader = req.headers['authorization']
-  
+  console.log("AUTHENTICATE TOKEN\n"+req.session.token);
   //const token = authHeader && authHeader.split(' ')[1]
-  const token = req.session.token
+  const token = req.session.token;
+ 
   if(token == null) {
     //console.log("No Token",req.session)
     return res.status(401).send("No token")
@@ -24,7 +25,7 @@ function authenticateToken(req,res,next) {
         console.log(err)
       return res.status(403).send("Wrong token pal")
     }
-    req.user = user
+    //req.user = user
     //console.log("authenticateToken: ",req.session)
     next();
   })
@@ -42,6 +43,10 @@ router.route("/token").post(UserCtrl.apiRefreshToken)
 router
 .route("/googleuser/:sub")
 .get(authenticateToken,UserCtrl.apiGetGoogleUser)
+
+router
+.route("/profile")
+.get(UserCtrl.apiGetProfile)
 
 router
 .route(process.env.USERNAME_URL)
@@ -88,7 +93,8 @@ router
 
 router
 .route("/checklogin")
-.post( authenticateToken,async (req, res, next)=>{
+.get( authenticateToken,async (req, res, next)=>{
+    console.log("YYYYYYY");
     if(req.session.user){ 
      return res.send("In Mainframe")
     }
