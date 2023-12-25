@@ -81,7 +81,7 @@ router
 router
 .route("/logout")
 .post( async (req, res, next)=>{
-    if (req.session.passport) {
+    if (req.session) {
         req.session.destroy();
         res.send("Goodbye");
        

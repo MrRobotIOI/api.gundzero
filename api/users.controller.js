@@ -301,10 +301,10 @@ export default class UsersController {
 
       static async apiUpdateLiked(req, res, next) {
 
-        if(req.user){
+        if(req.session.user){
           if( req.body.additem)
       {  try {
-          const userid =  req.user._id
+          const userid =  req.session.user.id
           const additem = req.body.additem
           const date = new Date()
           let liked_array = []
@@ -347,10 +347,10 @@ export default class UsersController {
 
       static async apiRemoveLiked(req, res, next) {
 
-        if(req.user){
+        if(req.session.user){
           if( req.body.removeitem)
       {  try {
-          const userid =  req.user._id
+          const userid =  req.session.user.id
           const removeitem = req.body.removeitem
           const date = new Date()
           let liked_array = []
