@@ -93,12 +93,11 @@ router
 
 router
 .route("/checklogin")
-.get( authenticateToken,async (req, res, next)=>{
-    console.log("YYYYYYY");
-    if(req.session.user){ 
+.get(async (req, res, next)=>{
+    console.log("HEADER\n"+ req.headers.token);
+
      return res.send("In Mainframe")
-    }
-    return res.send("Not in mainframe")
+   
    
 });
 

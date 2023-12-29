@@ -10,7 +10,7 @@ import http from "http"
 import jwt from 'jsonwebtoken'
 import mongoose from "mongoose"
 import MongoStore from "connect-mongo"
-
+import cookieParser from "cookie-parser"
 function authenticateToken(req,res,next) {
   const authHeader = req.headers['authorization']
 
@@ -35,14 +35,14 @@ jwt.verify(token, process.env.ACCESS_SECRET, (err,user)=>{
 }
 const app = express()
 
-
+//app.use(cookieParser('MY SECRET'));
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}));
 
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, secure: true, sameSite: 'lax'  /*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, secure: true, domain: ["https://mrrobotioi.github.io","https://gund-arm-backend-mrrobotioi.onrender.com"]  /*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   store: MongoStore.create({
@@ -71,7 +71,8 @@ const corsOptions = {
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:8000', "https://mrrobotioi.github.io","https://gund-zero.onrender.com"],
   credentials: true,
-  
+ 
+
 }));
 
 app.use((req, res, next)=>{
