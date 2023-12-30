@@ -42,7 +42,7 @@ app.use(express.urlencoded({extended: true}));
 
 const sessionMiddleware = session({
   secret:process.env.SESSIONSECRET, // only for deply
-  cookie: {maxAge: 1200000, secure: true, domain: ["https://mrrobotioi.github.io","https://gund-arm-backend-mrrobotioi.onrender.com"]  /*sameSite: 'none',secure: true,*/},
+  cookie: {maxAge: 1200000, domain: "https://gund-arm-backend-mrrobotioi.onrender.com"  /*sameSite: 'none',secure: true,*/},
   resave: false,
   saveUninitialized: false,  
   store: MongoStore.create({
