@@ -95,8 +95,13 @@ router
 .route("/checklogin")
 .get(async (req, res, next)=>{
     console.log("HEADER\n"+ req.headers.token);
-
-     return res.send("In Mainframe")
+    if(req.session.user){
+        return res.send("In Mainframe")
+    }
+    else{
+        return res.send("NOt In Mainframe")
+    }
+    
    
    
 });
