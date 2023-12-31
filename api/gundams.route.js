@@ -10,24 +10,43 @@ dotenv.config()
 const router = express.Router()
 function authenticateToken(req,res,next) {
     const authHeader = req.headers['authorization']
-  console.log("AUTHENTICATE TOKEN\n"+req.session.token);
+  console.log("AUTHENTICATE TOKEN\n"+req.body.token);
   //const token = authHeader && authHeader.split(' ')[1]
-  const token = req.session.token;
+  const token = req.body.token;
  
   if(token == null) {
     //console.log("No Token",req.session)
     return res.status(401).send("No token")
 }
   
-  jwt.verify(token, process.env.ACCESS_SECRET, (err,user)=>{
+  jwt.verify(token, process.env.ACCESS_SECRET, async (err,user)=>{
     if (err) {
-        req.session.token = null
-        console.log(err)
-      return res.status(403).send("Wrong token pal")
+        //req.session.token = null
+        console.log("Token expired")
+        const obj = jwt.decode(req.body.token)
+        const user0 =  await UserDAO.getUserbyId(obj.id);
+        const usertokenobj = {
+            id: user0._id,
+            }
+
+        jwt.verify(user0.refreshToken, process.env.REFRESH_SECRET, (err,user)=>{
+            if (err) {
+                 res.status(401).send("Bad Authentication")
+            }
+            else{
+            const accessToken = UserCtrl.generateAccessToken(usertokenobj);
+            console.log("New Access Token Granted")
+             res.send({ token: accessToken})
+            }
+        })
+        
+     // return res.status(403).send("Wrong token pal")
     }
+    else{
     //req.user = user
     //console.log("authenticateToken: ",req.session)
-    next();
+     res.send({message: "Good Authentication",token: token})
+    }
   })
   
   }
@@ -61,18 +80,12 @@ router
 
 router
 .route(process.env.NEW_USER)
-.post(UserCtrl.apiPostUser)
+.post(UserCtrl.apiCreateUser)
 
 router 
 //env
 .route("/login")
-.post(passport.authenticate('regular'), (req,res) =>{
-  
-    console.log("new sessionID: "+req.sessionID);
-    
-    res.sendStatus(200);
-    
-})
+.post(UserCtrl.apiLogin)
 router 
 //env
 .route("/googlelogin")
@@ -81,30 +94,27 @@ router
 router
 .route("/logout")
 .post( async (req, res, next)=>{
-    if (req.session) {
-        req.session.destroy();
-        res.send("Goodbye");
-       
-    } else {
-        res.send("No Session")
-        
-    }
+    console.log("Logging Out...")
+    const token = req.body.token;
+    jwt.verify(token, process.env.ACCESS_SECRET, async (err,user)=>{
+ if(err){
+    res.status(403).send("unauthorized")
+ }
+else{
+  
+    const obj = jwt.decode(token)
+        const user0 =  await UserDAO.getUserbyId(obj.id);
+    UserDAO.updateToken(user0.id,"")
+    res.status(200).send("signed out")
+}
+    })
+
+    
 });
 
 router
 .route("/checklogin")
-.get(async (req, res, next)=>{
-    console.log("HEADER\n"+ req.headers.token);
-    if(req.session.user){
-        return res.send("In Mainframe")
-    }
-    else{
-        return res.send("NOt In Mainframe")
-    }
-    
-   
-   
-});
+.post(authenticateToken);
 
 router
 .route("/addliked")
@@ -114,7 +124,7 @@ router
 .put(UserCtrl.apiRemoveLiked);
 router
 .route("/getliked")
-.get(UserCtrl.apiGetLiked);
+.post(UserCtrl.apiGetLiked);
 /*router
 .route("/login")
 .post( (req, res)=>{

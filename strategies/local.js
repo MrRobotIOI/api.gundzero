@@ -20,7 +20,6 @@ passport.deserializeUser(async (user,done)=>{
     console.log(user)
      done(null, user);
     
-
 });
 export default (passport) =>  {
     
