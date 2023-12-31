@@ -24,6 +24,11 @@ function authenticateToken(req,res,next) {
         //req.session.token = null
         console.log("Token expired")
         const obj = jwt.decode(req.body.token)
+
+  if(obj == null) {
+    //console.log("No Token",req.session)
+    return res.status(401).send("No token")
+}
         const user0 =  await UserDAO.getUserbyId(obj.id);
         const usertokenobj = {
             id: user0._id,
