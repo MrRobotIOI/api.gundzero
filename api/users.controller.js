@@ -139,6 +139,7 @@ export default class UsersController {
      {
          res.status(404).send("username not found")
      }
+     //when i forget password password == result.password ? (true):(false);
      else{
          const isMatch = await bcrypt.compare(password,result.password)
         
